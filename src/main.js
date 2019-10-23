@@ -6,12 +6,15 @@ import axios from "axios";
 import http from "./http";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import dayjs from "dayjs"
 
 // 使用插件的形式 而且插件里面必须有install方法
 Vue.use(ElementUI);
 
 Vue.prototype.$axios = http;
+Vue.prototype.$dayjs = dayjs;
 Vue.config.productionTip = false;
+
 
 // 响应拦截
 axios.defaults.timeout = 20000; // 设置超时时间

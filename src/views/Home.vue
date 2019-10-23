@@ -78,12 +78,12 @@
 
   .el-aside {
     background-color: #e1e1e1;
-    width: 20.7%;
+    width: 30%;
   }
 
   .el-main {
     background-color: #e1e1e1;
     color: #333;
-    width: 77.86%;
+    width: 70%;
   }
 </style>

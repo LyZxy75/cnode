@@ -1,8 +1,7 @@
 <template>
-  <div>
-    Register
+  <div id="container" style="width: 400px" align="center">
+
   </div>
-  
 </template>
 
 <script>
@@ -28,5 +27,7 @@
 </script>
 
 <style scoped lang="scss">
+  #container{
 
+  }
 </style>

@@ -11,20 +11,21 @@
         </div>
         <div>
           <span class="red">*</span>请输入密码
-          <input type="text" class="box" v-model="input1" />
+          <input type="password" class="box" v-model="input1" />
         </div>
         <div>
           <span class="red">*</span>请确认密码
-          <input type="text"  class="box" v-model="input2" />
+          <input type="password"  class="box" v-model="input2" />
         </div>
         <div class="butten">
           <el-button type="primary" @click="sign">立即登录</el-button>
         </div>
+
       </div>
     </el-card>
 
   </div>
-  
+
 </template>
 
 <script>
@@ -40,9 +41,10 @@
       }
     },
     methods: {
+
       sign () {
         if (this.input1 !== this.input2) {
-          alert('两次密码输入不一致，请重新输入');
+          this.$message.error('两次输入密码不一致，请重新输入');
           this.input ='';
           this.input1 = '';
           this.input2 = ''
@@ -55,6 +57,10 @@
             localStorage.setItem("user",this.input);
             this.$store.state.user = this.input;
             this.$router.push('/');
+            this.$message({
+              message: '恭喜你，这是一条成功消息',
+              type: 'success'
+            });
           }
         }
       }

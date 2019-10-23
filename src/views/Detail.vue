@@ -8,28 +8,35 @@
       <a href="" class="lable">招聘</a>
       <a href="" class="lable">客户端测试</a>
     </div>
-    <div class="text" v-for="item in list" :key="item.id">
+    <div class="text" v-for="item in list.slice(
+        numbers*(currentPage-1),
+        numbers*currentPage)" :key="item.id">
       <img :src="item.author.avatar_url" alt="" class="User_head" />
       <span class="reply">{{ item.reply_count }}</span
       >/
       <span class="visit">{{ item.visit_count }}</span>
       <span v-if="item.top === true" class="top">置顶</span>
-      <span v-if="item.tab === 'share' && item.top === false" class="tab"
-      >分享</span
-      >
+      <span v-if="item.tab === 'share' && item.top === false" class="tab">分享</span>
       <span v-if="item.tab === 'ask'" class="tab">问答</span>
-      <a class="link" @click="details(item)">{{ item.title }}</a>
+      <div class="link" @click="details(item)">{{ item.title }}</div>
+      <img :src="item.author.avatar_url" alt="" class="replies">
+      <div class="replie">
+        <div v-if="item.day">{{ item.day }}天前</div>
+        <div v-else-if="item.min">{{ item.min }}分钟前</div>
+        <div v-else>{{ item.hours }}小时前</div>
+      </div>
+
     </div>
     <div class="block">
       <span class="demonstration"></span>
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
+          :current-page="currentPage"
           :page-sizes="[10, 20, 30, 40]"
           :page-size="10"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="40">
+          :total="list.length">
       </el-pagination>
     </div>
   </div>
@@ -43,28 +50,54 @@
     data() {
       return {
         list:[],
-        currentPage1: 1,
-        currentPage2: 2,
-        currentPage3: 3,
-        currentPage4: 4
+        currentPage1: 5,
+        currentPage2: 5,
+        currentPage3: 5,
+        currentPage4: 4,
+        currentPage:1,
+        numbers:10,
+
       }
     },
     methods: {
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+
+        //每页的条数即为循环的条数
+        this.numbers = val;
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.currentPage = val;//当前页
+
       },
       getCtiy(){
+        //获取主题页数据
         this.$axios.req('/api/topics').then(res => {
           this.list = res.data
           console.log(res.data)
+          let nowTime = Date.now(); /*获取当前时间戳*/
+          // console.log(nowTime);
+          this.list.map(item => {
+            let difference =
+                nowTime -
+                this.$dayjs(item.last_reply_at).valueOf(); /*将时间转换为时间戳*/
+            let time = difference / 1000 / 60 / 60;
+            if (time < 1) {
+              let min = Math.floor(time * 60);
+              this.$set(item, "min", min);  /*创建属性*/
+            } else if (time > 24) {
+              let day = Math.ceil(time / 24);
+              this.$set(item, "day", day);
+            } else {
+              let hours = Math.floor(time);
+              this.$set(item, "hours", hours);
+            }
+          });
         }).catch(err => {
           console.log(err);
         })
       },
       details(item) {
+        //路由传参，把id传过去
         this.$router.push({ name: "Details", params: { id: item.id } });
       },
     },
@@ -117,18 +150,20 @@
     align-items: center ;
     padding: 10px 0;
     border-bottom: 1px solid #f0f0f0;
-    white-space: nowrap;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    position: relative;
     &:hover{
       background-color: #f6f6f6;
     }
-
   }
   .link {
+    width: 60%;
     text-decoration: none;
     color: #888888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
+    left: 17%;
   }
   .User_head {
     width: 30px;
@@ -147,13 +182,14 @@
     padding: 20px;
   }
   .top {
-
     background-color: #f0f0f0;
     color: #80bd01;
     font-size: 11px;
     border-radius: 2px;
     margin: 0 5px;
     padding: 5px 10px;
+    position: absolute;
+    left:10.5%
   }
   .tab {
     background-color: #e5e5e5;
@@ -161,12 +197,21 @@
     font-size: 12px;
     border-radius: 3px;
     margin: 0 5px;
-    padding: 2px 4px;
-
-
-
-
-
+    padding: 5px 10px;
+    position: absolute;
+    left:10.5%
+  }
+  .replies{
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    left: 80%;
+    border-radius: 3px;
+  }
+  .replie{
+    position: absolute;
+    left: 85%;
+    font-size: 12px;
   }
 
 </style>

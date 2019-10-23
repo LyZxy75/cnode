@@ -1,17 +1,15 @@
 <template>
   <div class="paging page__img">
     <div>
-      <span class="roof"
-      ><input class="placement" type="button" value="置顶"
-      /></span>
-      <span class="node">Node 12 值得关注的新特性</span>
-      <div class="frequency" v-if="details.author">
-        • 发布于2个月前 • 作者 {{ details.author.loginname }} •
-        {{ details.visit_count }} 次浏览 • 来自 分享
+      <span v-if="this.gird.top === true" class="roof">置顶</span>
+      <span class="node">{{this.gird.title}}</span>
+      <div class="frequency" v-if="gird.author">
+        • 发布于2个月前 • 作者 {{ gird.author.loginname }} •
+        {{ this.gird.visit_count }} 次浏览 • 来自 分享
       </div>
       <div class="hr"></div>
     </div>
-    <div v-html="details.content" class="content"></div>
+    <div v-html="this.gird.content" class="content"></div>
   </div>
 </template>
 
@@ -23,28 +21,23 @@
     data() {
       return {
         id: "",
-        details: []
+        gird:{}
+
       }
     },
     methods: {
-      getData() {
-        console.log(this.id);
-        this.$axios
-            .req("/api/topic/" + this.id)
-            .then(res => {
-              if (res) {
-                console.log(res.data);
-                this.details = res.data.data;
-                console.log(this.details.data);
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
-      }
+      //获取详情页数据
+      getData(){
+        this.$axios.req('/api/topic/' + this.id).then(res => {
+          this.gird = res.data
+          console.log(res)
+        }).catch(err => {
+          console.log(err);
+        })
+      },
     },
     mounted() {
-      this.id = this.$route.params.id;
+      this.id = this.$route.params.id
       this.getData();
 
     },
@@ -72,9 +65,15 @@
     font-size: 15px;
     border-radius: 5px;
   }
-  .roof input {
-    margin-top: 25px;
-    margin-bottom: 15px;
+  .roof {
+    /*margin-top: 25px;*/
+    /*margin-bottom: 15px;*/
+    background-color: #f0f0f0;
+    color: #80bd01;
+    font-size: 11px;
+    border-radius: 2px;
+    margin: 0 5px;
+    padding: 5px 10px;
   }
   .node {
     font-size: 23px;
